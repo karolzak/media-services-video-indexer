@@ -27,10 +27,10 @@ class DatasetLoader:  # noqa D103  # TODO: Remove this ignore
         Where target_label is a string and target is an int
         """
         print("Preparing %s level categories dataset" % "high" if high_level_labels else "sub")
-        df = df.rename(columns={"label1" if high_level_labels else "label2": "target_label"})
+        df = df.rename(columns={"high_label" if high_level_labels else "sub_label": "target_label"})
         df = df.drop(
             columns=[
-                "label2" if high_level_labels else "label1",
+                "sub_label" if high_level_labels else "high_label",
                 "vi_video_id",
                 "video_path",
         ])
