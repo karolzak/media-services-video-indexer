@@ -177,10 +177,10 @@ def compute_metrics(pred):
 
 
 def get_weights(df):
-    weights = {}
+    weights = dict
     total_examples = len(df)
     for label, count in df.target.value_counts().items():
-        weights[label] = 1 - (count/total_examples)
+        weights[int(label)] = float(round(1 - (count/total_examples), 2))
     return weights
 
 
