@@ -1,4 +1,4 @@
-import argparse
+import click
 
 from azureml.core import Environment, Experiment, ScriptRunConfig, Workspace
 from azureml.core.authentication import AzureCliAuthentication
@@ -56,11 +56,27 @@ def get_or_create_compute_target(ws, gpu=True):
     return cluster_name
 
 
+@click.command()
+@click.option(
+    "--experiment_name",
+    type=str,
+    default="kaosexp",
+)
+@click.option(
+    "--dataset_name",
+    type=str,
+    default="df_kaos",
+)
+@click.option(
+    "--high_level_labels",
+    default=True,
+    type=bool,
+)
 def main(  # noqa D103  # TODO: Remove this ignore
-    experiment_name: str = "kaos_exp",
+    experiment_name: str = "kaosexp",
     dataset_name: str = "df_kaos",
     high_level_labels: bool = True,
-    num_nodes: int = 4,
+    num_nodes: int = 3,
     num_gpu_per_node: int = 4,
 ):
     ws = Workspace.from_config()
@@ -209,7 +225,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
     )
     register_model_step.run_after(evaluate_step)
 
-    steps = [dataprep_step, train_step, evaluate_step]
+    steps = [dataprep_step, train_step, evaluate_step, register_model_step]
 
     pipeline = Pipeline(workspace=ws, steps=steps)
 
@@ -219,14 +235,4 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--experiment_name", dest="experiment_name", type=str)
-    parser.add_argument(
-        "--dataset_name", dest="dataset_name", type=str)
-    args = parser.parse_args()
-
-    main(
-        args.experiment_name,
-        args.dataset_name,
-    )
+    main()

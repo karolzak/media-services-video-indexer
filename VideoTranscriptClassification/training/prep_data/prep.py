@@ -78,7 +78,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
     data_output_path = Path(f"data_df_{experiment.id}_{run.id}.csv")
 
-    df.to_csv(str(data_output_path))
+    df.to_csv(str(data_output_path), index=False)
 
     with open(label_encoder_output_path, "wb") as f:
         pickle.dump(ds_loader.le, f, protocol=pickle.HIGHEST_PROTOCOL)

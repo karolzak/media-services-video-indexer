@@ -102,8 +102,8 @@ def main(  # noqa D103  # TODO: Remove this ignore
             else:
                 run.log(key, values)
 
-    most_confused_df = create_most_confused_df(results_df, embeddings)
-    most_confused_df.to_csv("./outputs/most_confused.csv")
+    # most_confused_df = create_most_confused_df(results_df, embeddings)
+    # most_confused_df.to_csv("./outputs/most_confused.csv")
 
     # copy azureml outputs
     copy_tree(model_path, "./outputs/best_model")

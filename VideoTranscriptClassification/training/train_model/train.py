@@ -77,7 +77,6 @@ def main(  # noqa D103  # TODO: Remove this ignore
         df,
         output_dir=temp_output_share,
         class_lookup=class_lookup,
-        high_level_labels=high_level_labels,
         num_epochs=num_epochs,
     )
     model, trainer, tokenizer = model_trainer.run_trainer()

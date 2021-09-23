@@ -88,8 +88,6 @@ def create_results_df(  # noqa D103  # TODO: Remove this ignore
             "predicted_label_idx",
             "prediction_probability",
             "is_valid",
-            "high_level_label",
-            "sub_level_label",
         ]
     ]
 

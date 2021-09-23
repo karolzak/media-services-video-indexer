@@ -1,7 +1,6 @@
 import shutil
 
 import click
-import torch
 from azureml.core import Run
 
 
@@ -41,12 +40,11 @@ def main(  # noqa D103  # TODO: Remove this ignore
     print("Copying labels encoder file to models path..")
     shutil.copy(label_encoder_path, model_path)
 
+    run.parent.upload_folder(model_path, model_path)
     print("Registering the model in AML..")
     model = run.parent.register_model(
         model_name="kaos_high" if high_level_labels else "kaos_sub",
         model_path=model_path,
-        model_framework=Model.Framework.PYTORCH,
-        model_framework_version=torch.__version__,
         description=f"Model to predict transcripts categories.",
         tags={"high_level_labels": high_level_labels},
     )

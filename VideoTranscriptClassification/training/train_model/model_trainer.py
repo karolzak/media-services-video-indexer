@@ -44,7 +44,7 @@ class ModelTrainer:  # noqa D103  # TODO: Remove this ignore
         save_strategy="epoch",
         fp16=True,
         load_best_model_at_end=True,
-        metric_for_best_model="eval_accuracy",
+        # metric_for_best_model="eval_accuracy",
         ddp_find_unused_parameters=False,
     ):
         self.train_labels = df[df.is_valid == False].target.values.tolist()  # noqa E712
@@ -73,7 +73,7 @@ class ModelTrainer:  # noqa D103  # TODO: Remove this ignore
             save_strategy=save_strategy,
             fp16=fp16,
             load_best_model_at_end=load_best_model_at_end,
-            metric_for_best_model=metric_for_best_model,
+            # metric_for_best_model=metric_for_best_model,
             ddp_find_unused_parameters=ddp_find_unused_parameters,
         )
         self.trainer = None
