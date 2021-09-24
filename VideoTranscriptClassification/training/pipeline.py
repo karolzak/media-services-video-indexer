@@ -68,14 +68,14 @@ def get_or_create_compute_target(ws, gpu=True):
     default="df_kaos",
 )
 @click.option(
-    "--high_level_labels",
-    default=True,
-    type=bool,
+    "--target_column",
+    default='high_label',
+    type=str,
 )
 def main(  # noqa D103  # TODO: Remove this ignore
     experiment_name: str = "kaosexp",
     dataset_name: str = "df_kaos",
-    high_level_labels: bool = True,
+    target_column: str = "high_label",
     num_nodes: int = 3,
     num_gpu_per_node: int = 4,
 ):
@@ -153,8 +153,8 @@ def main(  # noqa D103  # TODO: Remove this ignore
         temp_output_share,
         "--dataset_version_input_path",
         dataset_version_output,
-        "--high_level_labels",
-        high_level_labels,
+        "--target_column",
+        target_column,
     ]
 
     distributed_config = ScriptRunConfig(
@@ -185,8 +185,8 @@ def main(  # noqa D103  # TODO: Remove this ignore
             labelencoder_output,
             "--dataset_version_output_path",
             dataset_version_output,
-            "--high_level_labels",
-            high_level_labels,
+            "--target_column",
+            target_column,
         ],
         runconfig=cpu_config.run_config,
         outputs=[labelencoder_output, dataset_version_output],
@@ -202,8 +202,8 @@ def main(  # noqa D103  # TODO: Remove this ignore
             labelencoder_output,
             "--dataset_version_input_path",
             dataset_version_output,
-            "--high_level_labels",
-            high_level_labels,
+            "--target_column",
+            target_column,
         ],
         runconfig=gpu_config.run_config,
         inputs=[trained_model_output, labelencoder_output, dataset_version_output],
@@ -217,8 +217,8 @@ def main(  # noqa D103  # TODO: Remove this ignore
             trained_model_output,
             "--label_encoder_path",
             labelencoder_output,
-            "--high_level_labels",
-            high_level_labels,
+            "--target_column",
+            target_column,
         ],
         runconfig=cpu_config.run_config,
         inputs=[trained_model_output, labelencoder_output],

@@ -29,16 +29,16 @@ from shared.utils import seed_everything
     type=int,
 )
 @click.option(
-    "--high_level_labels",
-    default=True,
-    type=bool,
+    "--target_column",
+    required=True,
+    type=str,
 )
 def main(  # noqa D103  # TODO: Remove this ignore
+    target_column,
     save_model_path="./outputs/best_model",
     temp_output_share="./outputs",
     dataset_version_input_path="./outputs/dataset_version.txt",
     num_epochs=15,
-    high_level_labels=True
 ):
     seed_everything()
     run = Run.get_context()
@@ -47,7 +47,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
     args = {
         "num_epochs": num_epochs,
-        "high_level_labels": high_level_labels
+        "target_column": target_column
     }
 
     for k, v in args.items():
@@ -58,7 +58,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
     dataset = Dataset.get_by_name(
         ws,
-        name="kaos_high" if high_level_labels else "kaos_sub",
+        name="kaos_" + target_column,
         version=version)
     df = dataset.to_pandas_dataframe()
 

@@ -11,9 +11,9 @@ from azureml.core import Run
     default="./outputs/best_model",
 )
 @click.option(
-    "--high_level_labels",
-    default=True,
-    type=bool,
+    "--target_column",
+    required=True,
+    type=str,
 )
 @click.option(
     "--label_encoder_path",
@@ -21,8 +21,8 @@ from azureml.core import Run
     default="./outputs/label_encoder.pickle",
 )
 def main(  # noqa D103  # TODO: Remove this ignore
+    target_column,
     model_path="./outputs/best_model",
-    high_level_labels=True,
     label_encoder_path="./outputs/label_encoder.pickle",
 ):
     """Registration step is PythonScriptStep in AML Training pipeline."""
@@ -31,7 +31,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
     ws = experiment.workspace
 
     args = {
-        "high_level_labels": high_level_labels
+        "target_column": target_column
     }
 
     for k, v in args.items():
@@ -43,10 +43,10 @@ def main(  # noqa D103  # TODO: Remove this ignore
     run.parent.upload_folder(model_path, model_path)
     print("Registering the model in AML..")
     model = run.parent.register_model(
-        model_name="kaos_high" if high_level_labels else "kaos_sub",
+        model_name="kaos_" + target_column,
         model_path=model_path,
         description=f"Model to predict transcripts categories.",
-        tags={"high_level_labels": high_level_labels},
+        tags={"target_column": target_column},
     )
     print("Name:", model.name)
     print("Version:", model.version)

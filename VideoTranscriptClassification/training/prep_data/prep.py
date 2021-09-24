@@ -36,9 +36,9 @@ from prep_data.dataset_loader import DatasetLoader
     type=str,
 )
 @click.option(
-    "--high_level_labels",
-    default=True,
-    type=bool,
+    "--target_column",
+    default="high_label",
+    type=str,
 )
 def main(  # noqa D103  # TODO: Remove this ignore
     drop_empty_transcripts=True,
@@ -46,7 +46,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
     label_encoder_output_path="./outputs/label_encoder.pickle",
     dataset_version_output_path="./outputs/dataset_version.txt",
     dataset_name="df_kaos",
-    high_level_labels=True
+    target_column="high_label"
 ):
     seed_everything()
     run = Run.get_context()
@@ -56,11 +56,12 @@ def main(  # noqa D103  # TODO: Remove this ignore
     args = {
         "drop_empty_transcripts": drop_empty_transcripts,
         "min_samples_in_class": min_samples_in_class,
-        "high_level_labels": high_level_labels
+        "target_column": target_column
     }
 
     for k, v in args.items():
         run.tag(k, str(v))
+        run.parent.tag(k, str(v))
 
     df = Dataset.get(ws, dataset_name).to_pandas_dataframe()
 
@@ -68,9 +69,9 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
     df: pd.DataFrame = ds_loader.load_df(
         df,
+        target_column=target_column,
         drop_empty_transcripts=drop_empty_transcripts,
         min_samples_in_class=min_samples_in_class,
-        high_level_labels=high_level_labels
     )
 
     args["train_set_size"] = ds_loader.train_set_size
@@ -92,7 +93,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
     dataset = dataset.register(
         workspace=ws,
-        name="kaos_high" if high_level_labels else "kaos_sub",
+        name="kaos_" + target_column,
         description="Dataset used during model training",
         create_new_version=True,
         tags=args,

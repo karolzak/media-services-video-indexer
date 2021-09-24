@@ -15,7 +15,7 @@ class DatasetLoader:  # noqa D103  # TODO: Remove this ignore
     def load_df(
         self,
         df,
-        high_level_labels=True,
+        target_column,
         drop_empty_transcripts=True,
         min_samples_in_class=20,
     ):
@@ -26,11 +26,10 @@ class DatasetLoader:  # noqa D103  # TODO: Remove this ignore
         ['target_label', 'transcript', 'is_valid', 'target'].
         Where target_label is a string and target is an int
         """
-        print("Preparing %s level categories dataset" % "high" if high_level_labels else "sub")
-        df = df.rename(columns={"high_label" if high_level_labels else "sub_label": "target_label"})
+        print("Preparing dataset for target_column: ", target_column)
+        df = df.rename(columns={target_column: "target_label"})
         df = df.drop(
             columns=[
-                "sub_label" if high_level_labels else "high_label",
                 "vi_video_id",
                 "video_path",
         ])

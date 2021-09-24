@@ -33,16 +33,16 @@ from evaluate.evaluation import (
     default="./outputs/dataset_version.txt"
 )
 @click.option(
-    "--high_level_labels",
-    default=True,
-    type=bool,
+    "--target_column",
+    required=True,
+    type=str,
 )
 def main(  # noqa D103  # TODO: Remove this ignore
+    target_column,
     model_path="./outputs/best_model",
     label_encoder_path="./outputs/label_encoder.pickle",
     dataset_version_input_path="./outputs/dataset_version.txt",
     dataset_name="kaos_edu_videos",
-    high_level_labels=True
 ):
     seed_everything()
     run = Run.get_context()
@@ -50,7 +50,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
     ws = experiment.workspace
 
     args = {
-        "high_level_labels": high_level_labels
+        "target_column": target_column,
     }
 
     for k, v in args.items():
@@ -63,7 +63,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
     dataset = Dataset.get_by_name(
         ws,
-        name="kaos_high" if high_level_labels else "kaos_sub",
+        name="kaos_" + target_column,
         version=version)
     df = dataset.to_pandas_dataframe()
     df.set_index("video_id", inplace=True)
@@ -89,10 +89,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
     with open("metrics.json", "w+") as f:
         json.dump(metrics, f)
 
-    if high_level_labels:
-        key_set = set(metrics.keys())
-    else:
-        key_set = {"accuracy", "macro avg", "weighted avg"}
+    key_set = {"accuracy", "macro avg", "weighted avg"}
 
     for key, values in metrics.items():
         if key in key_set:
