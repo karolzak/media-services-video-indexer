@@ -2,7 +2,6 @@ from functools import partial
 
 import torch
 from shared.classes import EncodedDataset
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from transformers import (
     DistilBertForSequenceClassification,
     DistilBertTokenizerFast,
@@ -25,29 +24,6 @@ def get_tokenizer_and_model(  # noqa D103  # TODO: Remove this ignore
     return tokenizer, model
 
 
-def compute_metrics(pred):
-    """Compute metric.
-
-    Args:
-        pred (np.ndarray): Predictions of the model.
-
-    Returns:
-        dict: metric
-    """
-    labels = pred.label_ids
-    preds = pred.predictions.argmax(-1)
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        labels, preds, average="weighted"
-    )
-    acc = accuracy_score(labels, preds)
-
-    return_metrics = {
-        "accuracy": acc,
-        "f1": f1,
-        "precision": precision,
-        "recall": recall,
-    }
-
 class ModelTrainer:  # noqa D103  # TODO: Remove this ignore
     def __init__(  # noqa D107  # TODO: Remove this ignore
         self,
@@ -64,7 +40,6 @@ class ModelTrainer:  # noqa D103  # TODO: Remove this ignore
         save_strategy="epoch",
         fp16=True,
         load_best_model_at_end=True,
-        metric_for_best_model="eval_accuracy",
         ddp_find_unused_parameters=False,
     ):
         self.train_labels = df[df.is_valid == False].target.values.tolist()  # noqa E712
@@ -93,7 +68,6 @@ class ModelTrainer:  # noqa D103  # TODO: Remove this ignore
             save_strategy=save_strategy,
             fp16=fp16,
             load_best_model_at_end=load_best_model_at_end,
-            metric_for_best_model=metric_for_best_model,
             ddp_find_unused_parameters=ddp_find_unused_parameters,
         )
         self.trainer = None
@@ -105,7 +79,6 @@ class ModelTrainer:  # noqa D103  # TODO: Remove this ignore
             args=self.training_args,  # training arguments, defined above
             train_dataset=self.train_dataset,  # training dataset
             eval_dataset=self.val_dataset,  # evaluation dataset
-            compute_metrics=compute_metrics,
             callbacks=[
                 EarlyStoppingCallback(
                     early_stopping_patience=4, early_stopping_threshold=0.01
