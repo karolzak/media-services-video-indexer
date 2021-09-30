@@ -94,49 +94,6 @@ def create_results_df(  # noqa D103  # TODO: Remove this ignore
     return results_df, embeddings
 
 
-def create_most_confused_df(  # noqa D103  # TODO: Remove this ignore
-    results_df, embeddings
-):
-    doc_encodings_matrix = torch.tensor(list(chain.from_iterable(embeddings)))
-    video_ids = results_df.reset_index().video_id.tolist()
-    video_id_to_idx = {v: i for i, v in enumerate(video_ids)}
-
-    most_confused = (
-        results_df[results_df.target != results_df.predicted_label_idx]
-        .sort_values("prediction_probability", ascending=False)
-        .head(100)
-    )
-    most_confused["most_similar_videos"] = most_confused.apply(
-        lambda row: get_most_similar_videos(
-            row.name, video_ids, video_id_to_idx, doc_encodings_matrix, limit=5
-        ),
-        axis=1,
-    )
-    most_confused["most_similar_videos_labels"] = most_confused.apply(
-        lambda row: results_df.loc[row["most_similar_videos"]].target_label.tolist()[1:],
-        axis=1,
-    )
-    return most_confused
-
-
-def get_most_similar_videos(  # noqa D103  # TODO: Remove this ignore
-    target_video_id, video_ids, video_id_to_idx_lookup, doc_encodings_matrix, limit=10
-):
-    target_idx = video_id_to_idx_lookup[target_video_id]
-    sim_scores = (
-        torch.nn.functional.cosine_similarity(
-            doc_encodings_matrix[target_idx][None], doc_encodings_matrix
-        )
-        .cpu()
-        .tolist()
-    )
-    most_similar = sorted(
-        zip(video_ids, sim_scores), reverse=True, key=lambda tup: tup[1]
-    )[:limit]
-    most_similar_ids, _ = zip(*most_similar)
-    return list(most_similar_ids)
-
-
 def calculate_classification_metrics(results_df):  # noqa D103  # TODO: Remove this ignore
     le = preprocessing.LabelEncoder()
     encoded_targets = le.fit_transform(results_df.target_label)

@@ -36,6 +36,7 @@ def main(  # noqa D103  # TODO: Remove this ignore
 
     for k, v in args.items():
         run.tag(k, str(v))
+        run.parent.tag(k, str(v))
 
     print("Copying labels encoder file to models path..")
     shutil.copy(label_encoder_path, model_path)

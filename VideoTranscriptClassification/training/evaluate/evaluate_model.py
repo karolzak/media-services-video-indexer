@@ -10,7 +10,6 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from evaluate.evaluation import (
     calculate_classification_metrics,
-    create_most_confused_df,
     create_results_df,
     plot_confusion_matrix,
 )
@@ -98,9 +97,6 @@ def main(  # noqa D103  # TODO: Remove this ignore
                     run.log(f"{key}_{v_k}", v_v)
             else:
                 run.log(key, values)
-
-    # most_confused_df = create_most_confused_df(results_df, embeddings)
-    # most_confused_df.to_csv("./outputs/most_confused.csv")
 
     # copy azureml outputs
     copy_tree(model_path, "./outputs/best_model")
