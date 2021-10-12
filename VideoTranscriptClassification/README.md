@@ -7,7 +7,9 @@ For video classification tasks it sometimes happens that visual features of vide
 Solution steps:
 - preprocess videos with AVAM to extract transcripts and other insights
 - create a dataset which consists of extracted transcripts + ground truth label column
-- train and evaluate DistilBERT model on prepared data
+- train and evaluate DistilBERT model on prepared data using Azure Machine Learning pipeline
+
+Follow [Transcripts classification notebook](notebooks/Transcripts%20classification.ipynb) to reproduce above steps using a dummy dataset.
 
 Prerequisites:
 - [Azure Subscription](https://azure.microsoft.com/en-us/free)

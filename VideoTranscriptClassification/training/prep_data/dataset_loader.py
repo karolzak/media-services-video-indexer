@@ -92,4 +92,4 @@ class DatasetLoader:  # noqa D103  # TODO: Remove this ignore
     def remove_empty_transcripts(  # noqa D103  # TODO: Remove this ignore
         self, df, transcript_colname="transcript"
     ):
-        return df[df.apply(lambda row: row[transcript_colname] is not None, axis=1)]
+        return df[df[transcript_colname].str.len > 0]
